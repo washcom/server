@@ -32,3 +32,11 @@ export const createSemiActive = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+export const allSemiActive = async(req,res)=>{
+    try {
+        const allFiles =  await Semiactve.find()
+        return res.status(200).json(allFiles);
+    } catch (error) {
+        return res.status(500).json({message:"Internal Server Error"});
+    }
+}

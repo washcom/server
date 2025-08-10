@@ -1,5 +1,6 @@
 import FilefromCounty from '../models/files_from_counties.js';
 import Employees from '../models/Employees.js';
+import files_from_counties from '../models/files_from_counties.js';
 
 export const addFileFromCounty = async (req, res) => {
   const {
@@ -29,7 +30,7 @@ export const addFileFromCounty = async (req, res) => {
     // Create new file
     const newFileFromCounty = new FilefromCounty({
       dateReceived,
-      payrollNo: employeeExists._id, // store employee ObjectId
+      payrollNo, 
       officerName,
       volumeCount,
       county,
@@ -47,3 +48,11 @@ export const addFileFromCounty = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+export const allFromCounty = async (req, res) => {
+  try {
+    const allFiles = await files_from_counties.find();
+    return res.status(200).json(allFiles);
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}

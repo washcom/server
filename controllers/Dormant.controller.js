@@ -37,3 +37,11 @@ export const CreateDormantFile = async (req, res) => {
         }
     }
 };
+export const allDormant =async(req,res)=>{
+    try {
+        const allFiles = await DormantFile.find();
+        return res.status(200).json(allFiles);
+    } catch (error) {
+        return res.status(500).json({message:"Internal Server Error"});
+    }
+}

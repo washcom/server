@@ -28,3 +28,12 @@ export const addFilesToCounty = async (req, res) => {
     }
 
 }
+
+export const allToCounty = async(req,res)=>{
+    try {
+        const allFiles = await files_to_counties.find();
+        return res.status(200).json(allFiles);
+    } catch (error) {
+    return res.status(500).json({message:"Internal Server Error"});
+    }
+}

@@ -51,7 +51,7 @@ export const Authsignin = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ success: false, message: "Incorrect user password" });
         }
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '2hr' });
+        const token = jwt.sign({ id: user._id, role: user.role, email: user.email, name: user.name }, process.env.JWT_SECRET, { expiresIn: '2hr' });
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // false for localhost
@@ -136,4 +136,10 @@ export const resetPassword = async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: "Token error or expired" });
     }
+}
+export const Me = async (req, res)=>{
+    res.json({
+        name: req.user.name,
+        email: req.user.email,
+    });
 }
