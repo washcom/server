@@ -23,7 +23,7 @@ export const getOneuser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.json({ name: user.officerName, jobGroup: user.jobGroup });
+        res.json({ name: user.officerName, jobGroup: user.jobGroup,DOB:user.DOB });
     }
     catch (error) {
         res.status(500).json({ message: error.message });

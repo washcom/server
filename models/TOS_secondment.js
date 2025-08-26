@@ -2,30 +2,33 @@ import mongoose from 'mongoose';
 
 const SecondmentSchema = new mongoose.Schema({
   payrollNo: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Employee',
     required: true
   },
-  fileName: {
+  fileType: {
+    type: String,
+    enum: ['Main', 'Temporary'],
+    required: true,
+    default: 'Main'
+
+  },
+  institution: {
     type: String,
     required: true
   },
-  jobGroup: {
-    type: String,
-    required: true
-  },
-  dateOfBirth: {
-    type: Date,
-    required: true
-  },
-  secondmentOfficer: {
+  shelveLocation: {
     type: String,
     required: true
   },
   status: {
     type: String,
     enum: ['TOS', 'Secondment'],
-    required: true
+    required: true,
+    default: 'TOS'
+  },
+  comment: {
+    type: String
   }
 }, {
   timestamps: true

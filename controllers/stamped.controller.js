@@ -10,212 +10,307 @@ import DigitSix from '../models/DigitSix.js';
 import DigitSeven from '../models/DigitSeven.js';
 import DigitEight from '../models/DigitEight.js';
 import DigitNine from '../models/DigitNine.js';
+import semi_active_model from "../models/semi_active_files.js";
 
 export const addStampedFile = async (req, res) => {
-    const {
-        serialNumber,
-        fileName,
-        payrollNo,
-        status,
-        lastDigit,
-        shelveNumber } = req.body;
-    if (!serialNumber || !fileName || !payrollNo || !status || !shelveNumber) {
-        return res.status(400).json({ message: 'All fields are required' });
+    const { serialNumber, payrollNo, status, lastDigit, shelveNumber } = req.body;
 
+    if (!serialNumber || !payrollNo || !status || !shelveNumber) {
+        return res.status(400).json({ message: 'All fields are required' });
     }
-    const stampedFileExists = await Stamped.findOne({ payrollNo });
-    if (stampedFileExists) {
-        return res.status(400).json({ message: 'Stamped file already exists for this payroll number' });
-    }
+
     try {
-        if (lastDigit === '0') {
-            const newStampedFile = new Stamped({
-                serialNumber,
-                fileName,
-                payrollNo,
-                status,
-                shelveNumber
-            });
-            await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+        const Employee = await Employees.findOne({ payrollNo });
+        if (!Employee) {
+            return res.status(404).json({ message: 'No employee registered with that payroll No' });
         }
-        else if (lastDigit === '7') {
-            const serialNumberExist = await DigitSeven.findOne({ serialNumber });
+
+        if (lastDigit === '0') {
+            const serialNumberExist = await Stamped.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitSeven.findOne({ payrollNo });
+            const payrollNoExists = await Stamped.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
-            const newStampedFile = new DigitSeven({
+            const newStampedFile = new Stamped({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '1') {
             const serialNumberExist = await DigitOne.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitOne.findOne({ payrollNo });
+            const payrollNoExists = await DigitOne.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitOne({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '2') {
             const serialNumberExist = await DigitTwo.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitTwo.findOne({ payrollNo });
+            const payrollNoExists = await DigitTwo.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitTwo({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '3') {
             const serialNumberExist = await DigitThree.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitThree.findOne({ payrollNo });
+            const payrollNoExists = await DigitThree.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitThree({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '4') {
             const serialNumberExist = await DigitFour.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitFour.findOne({ payrollNo });
+            const payrollNoExists = await DigitFour.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitFour({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '5') {
             const serialNumberExist = await DigitFive.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitFive.findOne({ payrollNo });
+            const payrollNoExists = await DigitFive.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitFive({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '6') {
             const serialNumberExist = await DigitSix.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitSix.findOne({ payrollNo });
+            const payrollNoExists = await DigitSix.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitSix({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
+        }
+        else if (lastDigit === '7') {
+            const serialNumberExist = await DigitSeven.findOne({ serialNumber });
+            if (serialNumberExist) {
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
+            }
+            const payrollNoExists = await DigitSeven.findOne({ payrollNo: Employee._id });
+            if (payrollNoExists) {
+                return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
+            }
+            const newStampedFile = new DigitSeven({
+                serialNumber,
+                payrollNo: Employee._id,
+                status,
+                shelveNumber
+            });
+            await newStampedFile.save();
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else if (lastDigit === '8') {
             const serialNumberExist = await DigitEight.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitEight.findOne({ payrollNo });
+            const payrollNoExists = await DigitEight.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitEight({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
+
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
         }
         else {
             const serialNumberExist = await DigitNine.findOne({ serialNumber });
             if (serialNumberExist) {
-                return res.status(400).json({ message: "Cant Duplicate serialNumber already exist" });
+                return res.status(400).json({ message: "Can't duplicate serialNumber; already exists" });
             }
-            const payrollNoExists = await DigitNine.findOne({ payrollNo });
+            const payrollNoExists = await DigitNine.findOne({ payrollNo: Employee._id });
             if (payrollNoExists) {
                 return res.status(400).json({ message: "Stamped file already exists for this payroll number" });
             }
             const newStampedFile = new DigitNine({
                 serialNumber,
-                fileName,
-                payrollNo,
+                payrollNo: Employee._id,
                 status,
                 shelveNumber
             });
             await newStampedFile.save();
-            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: newStampedFile });
-        }
 
+            // Update employee status
+            await Employees.findByIdAndUpdate(Employee._id, { status: 'Stamped' });
+
+            // Update semi-active file status
+            await semi_active_model.findOneAndUpdate(
+                { payrollNo: Employee._id, status: 'processing' },
+                { status: 'processed' }
+            );
+
+            res.status(201).json({ message: 'Stamped file added successfully', stampedFile: await newStampedFile.populate('payrollNo', 'officerName payrollNo') });
+        }
 
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
+
 export const allStamped = async (req, res) => {
     try {
         // Query all collections in parallel
@@ -231,18 +326,17 @@ export const allStamped = async (req, res) => {
             eightFiles,
             nineFiles
         ] = await Promise.all([
-            Stamped.find(),
-            DigitOne.find(),
-            DigitTwo.find(),
-            DigitThree.find(),
-            DigitFour.find(),
-            DigitFive.find(),
-            DigitSix.find(),
-            DigitSeven.find(),
-            DigitEight.find(),
-            DigitNine.find()
+            Stamped.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitOne.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitTwo.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitThree.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitFour.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitFive.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitSix.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitSeven.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitEight.find().populate('payrollNo', 'officerName payrollNo'),
+            DigitNine.find().populate('payrollNo', 'officerName payrollNo')
         ]);
-
         // Combine all results
         const allFiles = [
             ...zeroFiles,
@@ -261,5 +355,30 @@ export const allStamped = async (req, res) => {
     } catch (error) {
         console.error('Error fetching all stamped files:', error);
         return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+export const lastDigit = async (req, res) => {
+    const models = {
+        '0': Stamped,
+        '1': DigitOne,
+        '2': DigitTwo,
+        '3': DigitThree,
+        '4': DigitFour,
+        '5': DigitFive,
+        '6': DigitSix,
+        '7': DigitSeven,
+        '8': DigitEight,
+        '9': DigitNine,
+    };
+    const { lastDigit } = req.params;
+    const Model = models[lastDigit] || null;
+    if (!Model) return res.status(400).json({ message: 'Invalid digit' });
+
+    try {
+        const lastFile = await Model.findOne().sort({ serialNumber: -1 });
+        res.json(lastFile || null);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

@@ -14,6 +14,9 @@ import DormantRoutes from './routes/Dormant.routes.js';
 import semiActiveRoutes from './routes/semiActi.routes.js';
 import AuthRoutes from './routes/Auth.routes.js';
 import StatRoutes from './routes/statistics.routes.js';
+import searchRoutes from'./routes/Search.routes.js';
+import './jobs/statusUpdateCron.js'
+
 // Load environment variables
 dotenv.config();
 
@@ -42,5 +45,6 @@ app.use('/api/dormant-files', DormantRoutes);
 app.use('/api/semi-active-files', semiActiveRoutes);
 app.use('/api/auth',AuthRoutes);
 app.use('/api/stats',StatRoutes);
+app.use('/api/search',searchRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

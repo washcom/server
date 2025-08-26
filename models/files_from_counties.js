@@ -6,21 +6,21 @@ const FilesFromCountySchema = new mongoose.Schema({
     required: true
   },
   payrollNo: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId ,
     ref: 'Employee',
     required: true
   },
-  officerName: {
-    type: String,
-    required: true
-  },
-  volumeCount: {
+  volume: {
     type: Number,
     required: true
   },
-  county: {
+  whereFrom: {
     type: String,
     required: true
+  },
+  fileType:{
+    type: String,
+    enum: ['Temporary', 'Main']
   },
   comments: {
     type: String

@@ -1,45 +1,50 @@
 import mongoose from 'mongoose';
 
 const FileMovementSchema = new mongoose.Schema({
-  date: {
-    type: Date,
-    default: Date.now // Current date
-  },
-  payrollNo: {  // Using payrollNo as a foreign key reference
-    type: String,
-    required: true,
-    ref: 'Employee'
-  },
-  officerName: {
-    type: String,
+  // Reference to the Employee document
+  payrollNo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Employee', // links to Employee model
     required: true
   },
   destination: {
-    type: String, // Department or office
-    required: true
-  },
-  receivingOfficer: {
     type: String,
-    required: true
+    required: [true, 'Destination is required']
+  },
+  collectedBy: {
+    type: String,
+    required: [true, 'Collected By is required']
   },
   dateCollected: {
     type: Date,
-    required: true // Date when the file was collected
+    default: Date.now,
+    required: true
   },
   dateReturned: {
     type: Date,
-    required: true // Date when the file was returned
+    default: null
   },
-  whereTo: {
-    type: String ,// Next destination
-    required: true
+  returnedBy: {
+    type: String,
+    default: null
   },
   receivedBy: {
-    type: String ,// Name of the person who received
-    required: true
+    type: String,
+    default: null
+  },
+  fileType: {
+    type: String,
+    enum: ['Temporary', 'Main'],
+    default: 'Main'
   }
 }, {
-  timestamps: true
+  timestamps: true // automatically adds createdAt and updatedAt
 });
-
+FileMovementSchema.index({
+  destination: "text",
+  collectedBy: "text",
+  returnedBy: "text",
+  receivedBy: "text",
+  fileType: "text"
+});
 export default mongoose.model('FileMovement', FileMovementSchema);
