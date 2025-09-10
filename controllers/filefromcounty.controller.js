@@ -69,7 +69,7 @@ export const addFileFromCounty = async (req, res) => {
 };
 export const allFromCounty = async (req, res) => {
   try {
-    const allFiles = await files_from_counties.find().populate('payrollNo', 'payrollNo officerName');
+    const allFiles = await files_from_counties.find().populate('payrollNo', 'payrollNo officerName status');
     return res.status(200).json(allFiles);
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error" });

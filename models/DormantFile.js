@@ -1,36 +1,43 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const DormantFileSchema = new mongoose.Schema({
+const dormantFileSchema = new mongoose.Schema({
   serialNumber: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
+    unique: true,
   },
   oldPayrollNo: {
-    type: String,      
+    type: Number,
+    
   },
-  PayrollNo: {
-    type:String,
-    ref: 'Employee',
-    required: true
+  newPayrollNo: {
+    type: Number,    
+    required: true,
   },
-  fileName: {
+  officerName: {
     type: String,
-    required: true
+    required: true,
   },
-  shelveNumber: {
+  shelveLocation: {
     type: String,
-    required: true
-  },
-  comments: {
-    type: String
+    required: true,
   },
   status: {
     type: String,
-    default: 'Dormant',
-    enum: ['Dormant']
+    default: "Dormant", 
+    immutable: true,    
   }
-}, {
-  timestamps: true
-});
+}, { timestamps: true });
 
-export default mongoose.model('DormantFile', DormantFileSchema);
+// Generate models for each year (1970–2016)
+const dormantFileModels = {};
+
+for (let year = 1970; year <= 2016; year++) {
+  dormantFileModels[year] = mongoose.model(
+    `DormantFile_${year}`,   
+    dormantFileSchema,       
+    `dormantfiles_${year}`   
+  );
+}
+
+export default dormantFileModels;

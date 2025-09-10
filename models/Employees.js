@@ -22,7 +22,7 @@ const EmployeeSchema = new mongoose.Schema({
   status: {
     type: String,
     default: 'Active',
-    enum: ['Active', 'Semi-active', 'Stamped', 'Dormant','County']
+    enum: ['Active', 'Semi-active', 'Stamped', 'Dormant','County',"5-digit"],
   },
   special: {
     type: Boolean,

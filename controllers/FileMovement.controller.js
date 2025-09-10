@@ -41,7 +41,7 @@ export const addFileMovement = async (req, res) => {
 export const allMovements = async (req, res) => {
   try {
     const movements = await FileMovement.find()
-      .populate({ path: 'payrollNo', select: 'officerName payrollNo' })
+      .populate({ path: 'payrollNo', select: 'officerName payrollNo status' })
       .sort({ dateCollected: -1 });
 
     return res.status(200).json({ message: 'All file movements retrieved', data: movements });

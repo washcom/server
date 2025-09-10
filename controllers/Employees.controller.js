@@ -1,5 +1,4 @@
 import Employee from '../models/Employees.js';
-import express from 'express';
 
 export const addemployee = async (req, res) => {
   const { payrollNo, officerName, jobGroup, designation, status, special, DOB, termsOfService } = req.body;
